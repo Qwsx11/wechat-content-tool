@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: wechat-content-tool
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: DEEPSEEK_BASE_URL
+        sync: false
+      - key: DOUBAO_ARK_API_KEY
+        sync: false
+      - key: DOUBAO_ARK_ENDPOINT
+        sync: false
+      - key: DOUBAO_ARK_BASE_URL
+        sync: false
+      - key: PORT
+        value: "10000"
