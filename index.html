@@ -105,7 +105,7 @@ body{font-family:var(--fn);background:var(--bg);color:var(--tx);min-height:100vh
 <div class="rp"><div class="tabs"><button class="tab ac" id="tabWx">公众号预览</button><button class="tab" id="tabMd">Markdown</button></div>
 <div class="pv" id="pa"><div class="empty" id="es"><div class="ei">&#9998;</div><p>生成选题 → 选择 → 一键生成图文</p></div><div id="wxPreviewDiv" style="display:none;max-width:677px;margin:0 auto;padding:0 0 40px;background:#fff;min-height:100%"></div><div class="ld-o" id="lo" style="display:none"><div class="spinner"></div><div class="ld-t" id="lt">AI 创作中...</div></div></div>
 <div class="sb" id="sb"><strong id="sbt"></strong> <span id="sbm"></span></div>
-<div class="tb"><button class="btn btn-o btn-sm" id="btnKazPolish" disabled>卡兹克风格润色</button><button class="btn btn-p btn-sm" id="btnCopyWx" disabled>一键复制完整图文</button><button class="btn btn-s btn-sm" id="btnCopyMd" disabled>复制 Markdown</button></div></div></div>
+<div class="tb"><button class="btn btn-p btn-sm" id="btnCoverDownload" disabled style="background:#e67e00">下载封面图</button><button class="btn btn-o btn-sm" id="btnKazPolish" disabled>卡兹克风格润色</button><button class="btn btn-p btn-sm" id="btnCopyWx" disabled>一键复制完整图文</button><button class="btn btn-s btn-sm" id="btnCopyMd" disabled>复制 Markdown</button></div></div></div>
 
 <script>
 (function(){"use strict";
@@ -169,7 +169,7 @@ s+="7 正文字必须有信息增量，不能只描述事件，必须加个人�
 s+="=== 四、写作风格 ===\n";
 s+="开头从具体事件/场景切入，不写宏大背景。段落短，一句话一段也正常。知识是聊着聊着顺手掏出来的。敢下判断有明确好恶。微头条不是写作文，是抢注意力。\n\n";
 s+="=== 五、配图 ===\n";
-s+="每300字左右插入 [IMG: 亚洲人+写实摄影简短描述]。描述用中文写。至少3个IMG标记。\n\n";
+s+="每300字左右插入 [IMG: 亚洲人+写实摄影简短描述]。描述用中文写。至少4个最多5个IMG标记。\n\n";
 s+="=== 六、输出 ===\n";
 s+="先给标题(#)，正文纯段落，每300字插[IMG: ...]。结尾固定格式：以上，既然看到这里了，如果觉得不错，随手点个赞、在看、转发三连吧。谢谢你看我的文章，我们下次再见。作者："+r.name;
 return s;}
@@ -196,11 +196,11 @@ return fetch(DU,{method:"POST",headers:{"Authorization":"Bearer "+k.ds,"Content-
 body:JSON.stringify({model:"deepseek-chat",messages:[{role:"system",content:sy},{role:"user",content:p}],max_tokens:mt,temperature:0.85})})
 .then(function(r){if(!r.ok)return r.json().then(function(e){throw new Error(e.error?e.error.message:"HTTP "+r.status);});return r.json();})
 .then(function(d){return d.choices[0].message.content;});}
-function callDB(p){
+function callDB(p,sz){
 var k=gk();if(!k.db)return Promise.reject(new Error("请设置 API 密钥"));
 var f="亚洲人，写实摄影，新闻纪实，真人实拍，自然光线，真实场景。 "+p;
 return fetch(BU,{method:"POST",headers:{"Authorization":"Bearer "+k.db,"Content-Type":"application/json"},
-body:JSON.stringify({model:"doubao-seedream-4-0-250828",prompt:f,n:1,size:"1280x720",response_format:"url"})})
+body:JSON.stringify({model:"doubao-seedream-4-0-250828",prompt:f,n:1,size:sz||"1280x720",response_format:"url"})})
 .then(function(r){if(!r.ok)return r.json().then(function(e){throw new Error(e.error?e.error.message:"HTTP "+r.status);});return r.json();});}
 
 // ============== OUTLINE ==============
@@ -218,7 +218,7 @@ document.getElementById("ol").value=(S.tps[i].points||[]).join("\n");document.ge
 document.getElementById("btnGenArticle").disabled=false;document.getElementById("es").style.display="none";
 document.getElementById("wxPreviewDiv").style.display="none";document.getElementById("wxPreviewDiv").innerHTML="";
 document.getElementById("sb").style.display="none";document.getElementById("btnCopyWx").disabled=true;
-document.getElementById("btnCopyMd").disabled=true;document.getElementById("btnKazPolish").disabled=true;}
+document.getElementById("btnCopyMd").disabled=true;document.getElementById("btnKazPolish").disabled=true;document.getElementById("btnCoverDownload").disabled=true;}
 
 // ============== GENERATE ==============
 function genArticle(){
@@ -226,7 +226,7 @@ if(S.sel===null)return T("请先选择选题");if(!gk().ds){T("请设置密钥")
 var t=S.tps[S.sel];var lm={short:"800-1200字",medium:"2000-3500字",long:"4000-6000字"};
 var len=lm[document.getElementById("ls").value]||"2000-3500字";
 LL("正在创作...");
-var p="选题："+t.title+"\n赛道："+document.getElementById("tr").value.trim()+"\n大纲："+document.getElementById("ol").value.trim()+"\n篇幅："+len+"\n至少3张配图，每300字[IMG: 亚洲人+写实摄影描述]。";
+var p="选题："+t.title+"\n赛道："+document.getElementById("tr").value.trim()+"\n大纲："+document.getElementById("ol").value.trim()+"\n篇幅："+len+"\n至少4张最多5张配图，第一张为封面图，每300字[IMG: 亚洲人+写实摄影描述]。";
 callDS(p,buildSys(),8192).then(function(raw){LL("去AI味...");
 return callDS(buildHum()+"\n\n"+raw,buildSys(),4096).then(function(hd){
 var rn=RN();hd=hd.replace(/数字生命卡兹克/g,rn.full).replace(/卡兹克/g,rn.name);
@@ -237,7 +237,7 @@ ti=ti.replace(/数字生命卡兹克/g,rn.full).replace(/卡兹克/g,rn.name);
 S.md=cl;S.ti=ti;S.ips=ims;S.ius=new Array(ims.length).fill("");
 var h=WX(cl,ti,ims);S.wx=h;RF(h);HL();
 document.getElementById("btnKazPolish").disabled=false;
-if(ims.length>0){GAI(ims,h);}else{T("文章生成完成");document.getElementById("btnCopyWx").disabled=false;}});
+if(ims.length>0){GAI(ims,h);}else{T("文章生成完成");document.getElementById("btnCopyWx").disabled=false;document.getElementById("btnCoverDownload").disabled=false;}});
 }).catch(function(e){HL();T("失败: "+e.message);});}
 
 function kazPolish(){
@@ -252,7 +252,7 @@ var cl=polished.replace(/\[IMG:\s*(.+?)\]/g,"");
 var tm=cl.match(/^#\s+(.+?)$/m);if(tm)S.ti=tm[1].trim();
 S.md=cl;S.ips=newIms;S.ius=new Array(newIms.length).fill("");
 var h=WX(cl,S.ti,newIms);S.wx=h;RF(h);HL();
-document.getElementById("btnCopyWx").disabled=false;
+document.getElementById("btnCopyWx").disabled=false;document.getElementById("btnCoverDownload").disabled=false;
 if(newIms.length>0){GAI(newIms,h);}else{T("卡兹克润色完成");}
 }).catch(function(e){HL();T("卡兹克润色失败: "+e.message);});}
 
@@ -309,12 +309,18 @@ function RF(h){document.getElementById("wxPreviewDiv").innerHTML=h;document.getE
 
 // ============== IMAGES ==============
 function GAI(ims,h){var t=ims.length,c=0;LL("配图生成中 (0/"+t+")...");SB("配图生成中",c+"/"+t);
-function dt(i){if(i>=t){HL();T(t+"张配图全部生成");document.getElementById("btnCopyWx").disabled=false;HB();return;}
-callDB(ims[i]).then(function(r){var u=r.data&&r.data[0]&&r.data[0].url;if(!u){c++;dt(i+1);return;}
+function dt(i){if(i>=t){HL();T(t+"张配图全部生成");document.getElementById("btnCopyWx").disabled=false;document.getElementById("btnCoverDownload").disabled=false;HB();return;}
+callDB(ims[i],i===0?"900x383":"1280x720").then(function(r){var u=r.data&&r.data[0]&&r.data[0].url;if(!u){c++;dt(i+1);return;}
 S.ius[i]=u;var el=document.getElementById("wim"+i);if(el){el.src=u;el.style.display="block";}
 S.wx=S.wx.replace('id="wim'+i+'" src=""','id="wim'+i+'" src="'+u+'"');c++;
 LL("配图生成中 ("+c+"/"+t+")...");SB("配图生成中",c+"/"+t);dt(i+1);}).catch(function(e){c++;dt(i+1);});}
 dt(0);}
+
+// ============== COVER DOWNLOAD ==============
+function downloadCover(){
+var el=document.getElementById("wim0");
+if(!el||!el.src){T("封面图还未生成");return;}
+var a=document.createElement("a");a.href=el.src;a.download="cover-900x383.jpg";document.body.appendChild(a);a.click();document.body.removeChild(a);T("封面图下载中...");}
 
 // ============== COPY ==============
 function copyMd(){navigator.clipboard.writeText(S.md).then(function(){T("已复制");},function(){T("复制失败");});}
@@ -344,6 +350,7 @@ document.getElementById("btnGenArticle").addEventListener("click",genArticle);
 document.getElementById("btnCopyMd").addEventListener("click",copyMd);
 document.getElementById("btnCopyWx").addEventListener("click",copyWx);
 document.getElementById("btnKazPolish").addEventListener("click",kazPolish);
+document.getElementById("btnCoverDownload").addEventListener("click",downloadCover);
 document.getElementById("rs").addEventListener("change",function(){ROLE=parseInt(this.value);T("已切换为 "+RN().name);});
 document.getElementById("tabWx").addEventListener("click",function(){swTab(0);});
 document.getElementById("tabMd").addEventListener("click",function(){swTab(1);});
