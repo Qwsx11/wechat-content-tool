@@ -168,7 +168,7 @@ s+="6 加口语化：坦率的讲、说真的、我是真的觉得、其实吧�
 s+="7 正文字必须有信息增量，不能只描述事件，必须加个人观点\n\n";
 s+="=== 四、写作风格 ===\n";
 s+="开头从具体事件/场景切入，不写宏大背景。段落短，一句话一段也正常。知识是聊着聊着顺手掏出来的。敢下判断有明确好恶。微头条不是写作文，是抢注意力。\n\n";
-s+="=== 五、配图 ===\n";
+s+="=== 五、配图 ===\n";s+="短篇插入3个[IMG:]，中篇4个，长篇5个。图片均匀分布在正文中，不要在结尾堆集。结尾最多出现1张。\n";
 s+="每300字左右插入 [IMG: 亚洲人+写实摄影简短描述]。描述用中文写。至少4个最多5个IMG标记。\n\n";
 s+="=== 六、输出 ===\n";
 s+="先给标题(#)，正文纯段落，每300字插[IMG: ...]。结尾固定格式：以上，既然看到这里了，如果觉得不错，随手点个赞、在看、转发三连吧。谢谢你看我的文章，我们下次再见。作者："+r.name;
@@ -226,7 +226,7 @@ if(S.sel===null)return T("请先选择选题");if(!gk().ds){T("请设置密钥")
 var t=S.tps[S.sel];var lm={short:"800-1200字",medium:"2000-3500字",long:"4000-6000字"};
 var len=lm[document.getElementById("ls").value]||"2000-3500字";
 LL("正在创作...");
-var p="选题："+t.title+"\n赛道："+document.getElementById("tr").value.trim()+"\n大纲："+document.getElementById("ol").value.trim()+"\n篇幅："+len+"\n至少4张最多5张配图，第一张为封面图，每300字[IMG: 亚洲人+写实摄影描述]。";
+var p="选题："+t.title+"\n赛道："+document.getElementById("tr").value.trim()+"\n大纲："+document.getElementById("ol").value.trim()+"\n篇幅："+len+"\n按篇幅插入配图，每300字[IMG: 亚洲人+写实摄影描述]。";
 callDS(p,buildSys(),8192).then(function(raw){LL("去AI味...");
 return callDS(buildHum()+"\n\n"+raw,buildSys(),4096).then(function(hd){
 var rn=RN();hd=hd.replace(/数字生命卡兹克/g,rn.full).replace(/卡兹克/g,rn.name);
@@ -302,7 +302,7 @@ parts.push("<div style=\"margin:24px 18px;padding:24px 24px;background:linear-gr
 }else if(s.length<45){parts.push("<div style=\"margin:18px 0;padding:14px 18px;background:"+bg+";border-left:4px solid "+ac+";border-radius:0 10px 10px 0;box-shadow:0 1px 6px rgba(0,0,0,.03)\"><p style=\"margin:0;padding:0;font-size:15px;color:#444;line-height:2.1;text-align:justify\">"+styled+"</p></div>");
 }else{parts.push("<div style=\"margin:16px 0;padding:16px 20px;background:"+bg+";border-radius:12px;border:1px solid "+bo+";box-shadow:0 1px 4px rgba(0,0,0,.02)\"><p style=\"margin:0;padding:0;font-size:15px;color:#333;line-height:2.1;text-align:justify\">"+styled+"</p></div>");}
 pc++;styleIdx=(styleIdx+1)%grads.length;}}
-while(ic<ims.length){parts.push("<div style=\"margin:32px 0;text-align:center;padding:8px;background:"+grads[ic%grads.length]+";border-radius:14px;border:1px solid "+bords[ic%bords.length]+";box-shadow:0 4px 24px rgba(0,0,0,.08)\"><div style=\"position:relative;display:inline-block;max-width:100%\"><img id=\"wim"+ic+"\" src=\"\" alt=\"\" style=\"max-width:100%;border-radius:8px;display:none;margin:0 auto\"><div style=\"position:absolute;top:20px;left:20px;background:linear-gradient(135deg,rgba(7,193,96,.92),rgba(4,170,82,.92));color:#fff;padding:4px 14px;border-radius:16px;font-size:11px;font-weight:800;letter-spacing:.05em;box-shadow:0 3px 10px rgba(7,193,96,.4);z-index:2\">IMAGE "+(ic+1)+"</div></div></div>");ic++;}
+if(ic<ims.length){parts.push("<div style=\"margin:32px 0;text-align:center;padding:8px;background:"+grads[ic%grads.length]+";border-radius:14px;border:1px solid "+bords[ic%bords.length]+";box-shadow:0 4px 24px rgba(0,0,0,.08)\"><div style=\"position:relative;display:inline-block;max-width:100%\"><img id=\"wim"+ic+"\" src=\"\" alt=\"\" style=\"max-width:100%;border-radius:8px;display:none;margin:0 auto\"><div style=\"position:absolute;top:20px;left:20px;background:linear-gradient(135deg,rgba(7,193,96,.92),rgba(4,170,82,.92));color:#fff;padding:4px 14px;border-radius:16px;font-size:11px;font-weight:800;letter-spacing:.05em;box-shadow:0 3px 10px rgba(7,193,96,.4);z-index:2\">"+(ic===0?"封面图 · 点此下载":"图"+(ic+1))+"</div></div></div>");ic++;}
 parts.push("<div style=\"text-align:center;margin:40px 0 20px;padding:20px 0\"><span style=\"display:inline-block;width:60px;height:3px;background:linear-gradient(90deg,transparent,#ccc,transparent);border-radius:2px\"></span><span style=\"display:inline-block;margin:0 10px;color:#ccc;font-size:14px\">END</span><span style=\"display:inline-block;width:60px;height:3px;background:linear-gradient(90deg,transparent,#ccc,transparent);border-radius:2px\"></span></div>");
 parts.push("</div>");return parts.join("\n");}
 function RF(h){document.getElementById("wxPreviewDiv").innerHTML=h;document.getElementById("wxPreviewDiv").style.display=curTab==="wx"?"block":"none";}
@@ -310,7 +310,7 @@ function RF(h){document.getElementById("wxPreviewDiv").innerHTML=h;document.getE
 // ============== IMAGES ==============
 function GAI(ims,h){var t=ims.length,c=0;LL("配图生成中 (0/"+t+")...");SB("配图生成中",c+"/"+t);
 function dt(i){if(i>=t){HL();T(t+"张配图全部生成");document.getElementById("btnCopyWx").disabled=false;document.getElementById("btnCoverDownload").disabled=false;HB();return;}
-callDB(ims[i],i===0?"900x383":"1280x720").then(function(r){var u=r.data&&r.data[0]&&r.data[0].url;if(!u){c++;dt(i+1);return;}
+callDB(ims[i],"1280x720").then(function(r){var u=r.data&&r.data[0]&&r.data[0].url;if(!u){c++;dt(i+1);return;}
 S.ius[i]=u;var el=document.getElementById("wim"+i);if(el){el.src=u;el.style.display="block";}
 S.wx=S.wx.replace('id="wim'+i+'" src=""','id="wim'+i+'" src="'+u+'"');c++;
 LL("配图生成中 ("+c+"/"+t+")...");SB("配图生成中",c+"/"+t);dt(i+1);}).catch(function(e){c++;dt(i+1);});}
